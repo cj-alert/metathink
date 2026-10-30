@@ -1,0 +1,10 @@
+# Research when needed — implementation process
+
+October 28, 2026. User directs: the system recognizes when internet research is needed and uses Meta Responses web_search. D112/D113 require explicit incomplete assessments for missing research and plain-language Reason before technical Evidence.
+
+1. Drones select RESEARCH <inquiry_id> in their existing Contribute/Expand turn when current facts, published evidence or prior-art comparison is needed and absent. The question goes in their normal answer section. No separate routing classifier, fixed researcher role or user gate. Membership and request ownership are checked before external work.
+2. Route only research calls through TextRequest.WebSearch to Meta /responses; ordinary calls stay on Chat Completions. Keep Spark Contributor routing and atomic plain-text responses. Retain actual search call status, retrieved sources/citations and provider response. No third-party dependency, arbitrary cap or automatic retry.
+3. Store research question, original answer, search evidence and explicit missing/error state in ordinary inquiry work. Workers and Queen read operational evidence; debug logs remain excluded. Research results wake relevant thinking and refresh reports. Tool availability or generated citations alone do not establish performed research or novelty.
+4. Allow explicit incomplete criterion assessments, without numerical substitution, and persist them for Queen guidance. Supported criteria keep their scores. New assessments include plain-language Reason and technical Evidence; historical replies stay readable and unchanged.
+5. Use the existing local test runner once sources freeze, adding focused fake-provider/real-SQLite tests for endpoint routing, evidence visibility, failed/no-search handling and incomplete-score behavior. No paid/live calls. Then build, publish the historical dashboard read-only, and inspect UI Reason/Evidence and incomplete display. Preserve the original h experiment and all old outputs.
+6. Record actual receipts and limitations, plus deferred live model verification.

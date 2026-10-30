@@ -1,0 +1,102 @@
+{
+  "version": "0.0.16",
+  "objective": "Compare actual team distribution under five isolated methods",
+  "checkpoint": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Experiments/MetaThought_v0.0.8f - Frozen Queen handoff",
+  "handoff": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Experiments/MetaThought_v0.0.10p - Queen mechanism plausibility handoff/reply.md",
+  "role": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Experiments/MetaThought_v0.0.10p - Queen mechanism plausibility handoff/role.txt",
+  "models": {
+    "drone": "muse-spark-1.3-contributor",
+    "queen": "muse-spark-1.3-contributor"
+  },
+  "matched_prefixes": [
+    200,
+    400
+  ],
+  "runs": [
+    {
+      "test": 1,
+      "label": "Test 1 influence without recruitment",
+      "newborn_mode": "invitation",
+      "run_folder": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Experiments/MetaThought_v0.0.16a - Test 1 influence without recruitment",
+      "config_source": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Code/MetaThought_v0.0.16/variant-1.json"
+    },
+    {
+      "test": 2,
+      "label": "Test 2 newborn fit pair",
+      "newborn_mode": "fit_pair",
+      "run_folder": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Experiments/MetaThought_v0.0.16b - Test 2 newborn fit pair",
+      "config_source": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Code/MetaThought_v0.0.16/variant-2.json"
+    },
+    {
+      "test": 3,
+      "label": "Test 3 action distinctions",
+      "newborn_mode": "invitation",
+      "run_folder": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Experiments/MetaThought_v0.0.16c - Test 3 action distinctions",
+      "config_source": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Code/MetaThought_v0.0.16/variant-3.json"
+    },
+    {
+      "test": 4,
+      "label": "Test 4 newborn rotation",
+      "newborn_mode": "rotation",
+      "run_folder": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Experiments/MetaThought_v0.0.16d - Test 4 newborn rotation",
+      "config_source": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Code/MetaThought_v0.0.16/variant-4.json"
+    },
+    {
+      "test": 5,
+      "label": "Test 5 newborn hive usefulness",
+      "newborn_mode": "hive_choice",
+      "run_folder": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Experiments/MetaThought_v0.0.16e - Test 5 newborn hive usefulness",
+      "config_source": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Code/MetaThought_v0.0.16/variant-5.json",
+      "presentation_order": "committed drone count ascending, inquiry ID for ties"
+    }
+  ],
+  "status": "retired_by_user",
+  "hold": {
+    "requested_by": "user",
+    "instruction": "Pause before you start them",
+    "recorded_utc": "2026-10-29T02:06:24.819Z",
+    "resume_requires": "explicit user instruction",
+    "resolved_by": "After that change, begin the 5 runs",
+    "resolved_utc": "2026-10-29T02:11:05.921Z"
+  },
+  "started_utc": "2026-10-29T02:12:53.658Z",
+  "exec_sessions": {
+    "1": 89377,
+    "2": 81929,
+    "3": 82271,
+    "4": 35607,
+    "5": 88284
+  },
+  "continuations": [
+    {
+      "started_utc": "2026-10-29T02:25:51.199Z",
+      "reason": "fully_received_HTTP429",
+      "workers_per_run": 4,
+      "exec_sessions": {
+        "1": 33001,
+        "2": 16900,
+        "3": 30177,
+        "4": 15253,
+        "5": 11601
+      },
+      "recovery_receipt": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Analysis/10-28_MetaThought_v0.0.16_429_Recovery.json"
+    }
+  ],
+  "finished_utc": "2026-10-29T02:59:27.545Z",
+  "final_evidence": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_MetaThought/.Analysis/10-28_MetaThought_v0.0.16_Final_Evidence.json",
+  "comparison_work_per_run": 400,
+  "final_saved_work": {
+    "1": 406,
+    "2": 412,
+    "3": 407,
+    "4": 410,
+    "5": 405
+  },
+  "retirement": {
+    "date": "2026-10-29",
+    "reason": "Founder replaced experiments 1 through 5 with Queen-guided resource health and newborn visibility.",
+    "previous_status": "observation_complete_stopped",
+    "replacement_version": "0.0.17",
+    "evidence_preserved": true
+  }
+}

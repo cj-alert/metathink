@@ -1,0 +1,42 @@
+{
+  "model": "muse-spark-1.3-contributor",
+  "input": "Observed sensor readings: 2 at known input 0; 12 at known input 10. This is an API smoke test.",
+  "questions": [
+    {
+      "type": "predicate",
+      "name": "reading_at_zero",
+      "instructions": "Does the supplied evidence state that the reading is 2 at known input 0?"
+    },
+    {
+      "type": "choice",
+      "name": "typed_choice",
+      "instructions": "Select the BOOLEAN true option, not the string true.",
+      "choices": [
+        {
+          "value": true,
+          "description": "The boolean true"
+        },
+        {
+          "value": "true",
+          "description": "The string true"
+        }
+      ]
+    },
+    {
+      "type": "score",
+      "name": "offset_support",
+      "instructions": "How well does y=x+2 explain both supplied observations?",
+      "levels": [
+        {
+          "label": "contradicted"
+        },
+        {
+          "label": "partial"
+        },
+        {
+          "label": "consistent"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+[
+  "CREATE TABLE IF NOT EXISTS hive_worker_queue(drone_id INTEGER PRIMARY KEY REFERENCES hive_drones(id),request_id INTEGER NOT NULL REFERENCES hive_requests(id),owner TEXT NOT NULL DEFAULT '',phase TEXT NOT NULL DEFAULT 'contribute' CHECK(phase IN ('contribute','expand')),focus_id INTEGER NOT NULL REFERENCES hive_inquiries(id),discovery_id INTEGER NOT NULL DEFAULT 0,read_work_id INTEGER REFERENCES hive_inquiry_work(id),queue_order INTEGER NOT NULL,turn_activity INTEGER NOT NULL DEFAULT 0,seen_work_id INTEGER NOT NULL DEFAULT 0,asleep_work_id INTEGER,seen_guidance_id INTEGER NOT NULL DEFAULT 0,asleep_guidance_id INTEGER,peer_after INTEGER NOT NULL DEFAULT 0,connection_after INTEGER NOT NULL DEFAULT 0,offered_peer_id INTEGER NOT NULL DEFAULT 0,offered_connection_id INTEGER NOT NULL DEFAULT 0)",
+  "CREATE INDEX IF NOT EXISTS ix_worker_queue_ready ON hive_worker_queue(request_id,queue_order,drone_id) WHERE owner=''",
+  "CREATE UNIQUE INDEX IF NOT EXISTS ix_worker_queue_owner ON hive_worker_queue(owner) WHERE owner<>''",
+  "CREATE INDEX IF NOT EXISTS ix_worker_queue_order ON hive_worker_queue(queue_order)",
+  "CREATE INDEX IF NOT EXISTS ix_inquiry_work_peer ON hive_inquiry_work(inquiry_id,id,drone_id) WHERE kind IN ('PROPOSE','JOIN','CONTRIBUTE')",
+  "CREATE INDEX IF NOT EXISTS ix_inquiry_work_latest_member ON hive_inquiry_work(inquiry_id,drone_id,id) WHERE kind IN ('PROPOSE','JOIN','CONTRIBUTE')",
+  "CREATE INDEX IF NOT EXISTS ix_inquiry_work_research ON hive_inquiry_work(inquiry_id,id) WHERE kind='RESEARCH'"
+]

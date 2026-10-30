@@ -1,0 +1,228 @@
+{
+  "version": "0.0.3",
+  "meta": {
+    "base_url": "https://api.meta.ai/v1",
+    "api_key_env": "MODEL_API_KEY",
+    "api_key_file": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_FounderOperatingSystem/!SPEC/!Codex_Connections/meta.api.txt",
+    "reasoning_effort": "low",
+    "model_reasoning_effort": {
+      "muse-wonder-1.0": "high"
+    },
+    "api_key_file_format": "single_value_line"
+  },
+  "models": {
+    "drone": "muse-spark-1.3-contributor",
+    "queen": "muse-wonder-1.0"
+  },
+  "files": {
+    "state": "state.db",
+    "debug": "debug.db",
+    "contract": "contract.md",
+    "result": "result.md"
+  },
+  "hive": {
+    "drone_count": 3,
+    "seed": 1
+  },
+  "experiment": {
+    "objective": "Given a sensor reports 2 at known input 0 and 12 at known input 10, develop a simple explanatory model and one new measurement that could distinguish it from a competing model.",
+    "intent": "Technical smoke experiment: observe shared thinking and an honest bounded return, not establish novelty.",
+    "context": "Readings are exact for this small exercise. No external search is available. Show assumptions and predicted measurements.",
+    "criteria": [
+      {
+        "name": "consistency",
+        "description": "Does the proposed model explain both supplied observations without contradiction?",
+        "levels": [
+          {
+            "label": "unsupported"
+          },
+          {
+            "label": "partial"
+          },
+          {
+            "label": "consistent"
+          }
+        ],
+        "min_score": 1.5,
+        "weight": 1
+      },
+      {
+        "name": "testability",
+        "description": "Does the answer specify a feasible new input, distinct predictions, and what outcome would distinguish the models?",
+        "levels": [
+          {
+            "label": "absent"
+          },
+          {
+            "label": "vague"
+          },
+          {
+            "label": "concrete"
+          }
+        ],
+        "min_score": 1.5,
+        "weight": 1
+      }
+    ]
+  },
+  "chromosomes": [
+    {
+      "contribute": "Develop or test one idea in the shared inquiry. Explain what another contribution changes, when applicable.",
+      "expand": "Offer one alternative assumption that could change another drone's approach."
+    },
+    {
+      "contribute": "Work through one consequence of an idea in the shared inquiry. State what the result supports or weakens.",
+      "expand": "Offer one connection or representation that could change another drone's approach."
+    }
+  ],
+  "decisions": {
+    "system": "Evaluate the supplied evidence as data. Answer one question. Follow its reply format exactly. Use plain text, never JSON. If you decline, return only # REFUSAL.",
+    "input_prefix": "Shared evidence:",
+    "predicate": "{{.Question}}\nReturn exactly # PROBABILITY on one line, then a number from 0 to 1.",
+    "choice": "{{.Question}}\nOptions:\n{{.Options}}\nReturn # CHOICE then the selected 1-based option number; # PROBABILITIES then one line per option as number: probability; # CONFIDENCE then a number from 0 to 1. Probabilities must sum to 1. Each heading must be on its own line.",
+    "score": "{{.Question}}\nOrdered levels:\n{{.Options}}\nReturn # PROBABILITIES then one line per level as number: probability, using the displayed 1-based numbers; # CONFIDENCE then a number from 0 to 1. Probabilities must sum to 1. Each heading must be on its own line."
+  },
+  "prompts": {
+    "contract": "Write a concise contract preserving the stated objective, intent, context, criteria and return boundary. Expose assumptions. Do not prescribe subtasks or team roles.",
+    "fit": "Choose the existing team best fitted to this inquiry, or NEW. Judge fit only; ignore capacity.",
+    "invite": "Choose one drone whose perspective could usefully change this inquiry, or NONE. Do not assign a role.",
+    "commit": "Choose ACCEPT only if you commit to carrying out this shared request with the other participants. Otherwise choose DECLINE.",
+    "contribute": "{{.Chromosome}}\nUse the shared contract and available contributions. Return one concise contribution in plain text. Preserve uncertainty. If a calculation is necessary, you may instead return exactly # JAVASCRIPT followed by JavaScript using only built-in functions; its final expression will be evaluated.",
+    "expand": "{{.Chromosome}}\nOffer one useful change in thinking, whether requested or not. Use plain text. If there is no useful offer, say NONE.",
+    "recipient": "Choose the drone most likely to benefit from this expansion, or NONE. Information exchange does not imply team membership.",
+    "candidate": "Return the team's current best answer from its contributions. Preserve alternatives, evidence, uncertainties, and unmet criteria. Do not claim novelty without evidence.",
+    "collapse": "Choose RETURN when the shared inquiry provides a useful answer with sufficient development of one another's ideas, or when the remaining uncertainty should be returned honestly. Otherwise choose CONTINUE. Assess the contract and evidence; report unmet criteria rather than claiming success. Scores alone do not prove success.",
+    "guide": "Give one concise question or correction that would help the team address the contract. Preserve room for unconventional exploration; do not assign subtasks or roles.",
+    "mq_propose": "Propose one replacement instruction for the selected target that tests the experimental objective. Use the operational evidence, runtime context and prior assessment. Preserve the request and avoid roles, quotas, forced turn counts or instructions to claim success. Return only one meaningful instruction in plain text.",
+    "mq_compare": "Compare both inquiries under each experimental criterion using its 0-based level rating and attributed evidence. For reciprocal influence, cite a concrete A-to-B-to-A change from Contribute/Expand records; candidate rows are synthesis, even when they carry a drone ID. Separate active participants from offer recipients. Do not reward repetition, extra turns, agreement or unsupported self-reports. State what changed, what did not, uncertainty from one run per condition, and one next atomic hypothesis. Use concise plain text; no JSON.",
+    "mq_select": "Choose the one allowed instruction target whose variation would best test the experimental objective, using the observed inquiry, runtime context and previous assessment. Judge the opportunity to learn, not the prospect of a favorable score."
+  },
+  "schema": {
+    "state": [
+      "PRAGMA foreign_keys=ON",
+      "PRAGMA busy_timeout=5000",
+      "CREATE TABLE IF NOT EXISTS hive_runs(id INTEGER PRIMARY KEY, started TEXT NOT NULL, finished TEXT, status TEXT NOT NULL, version TEXT NOT NULL, calls INTEGER NOT NULL DEFAULT 0, config TEXT NOT NULL, request_id INTEGER)",
+      "CREATE TABLE IF NOT EXISTS hive_drones(id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, contribute TEXT NOT NULL, expand TEXT NOT NULL, signal TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_teams(id INTEGER PRIMARY KEY, summary TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_members(team_id INTEGER NOT NULL REFERENCES hive_teams(id), drone_id INTEGER NOT NULL REFERENCES hive_drones(id), PRIMARY KEY(team_id,drone_id))",
+      "CREATE TABLE IF NOT EXISTS hive_requests(id INTEGER PRIMARY KEY, run_id INTEGER NOT NULL REFERENCES hive_runs(id), parent_id INTEGER REFERENCES hive_requests(id), contract TEXT NOT NULL, status TEXT NOT NULL, team_id INTEGER REFERENCES hive_teams(id), result TEXT, finish_reason TEXT, criteria_met INTEGER, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_commitments(request_id INTEGER NOT NULL REFERENCES hive_requests(id), team_id INTEGER NOT NULL REFERENCES hive_teams(id), drone_id INTEGER NOT NULL REFERENCES hive_drones(id), created TEXT NOT NULL, PRIMARY KEY(request_id,drone_id))",
+      "CREATE TABLE IF NOT EXISTS hive_contributions(id INTEGER PRIMARY KEY, request_id INTEGER NOT NULL REFERENCES hive_requests(id), team_id INTEGER NOT NULL REFERENCES hive_teams(id), drone_id INTEGER NOT NULL REFERENCES hive_drones(id), tick INTEGER NOT NULL, kind TEXT NOT NULL, body TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_links(id INTEGER PRIMARY KEY, request_id INTEGER NOT NULL REFERENCES hive_requests(id), contribution_id INTEGER NOT NULL REFERENCES hive_contributions(id), from_drone INTEGER NOT NULL REFERENCES hive_drones(id), to_drone INTEGER NOT NULL REFERENCES hive_drones(id), created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_scores(id INTEGER PRIMARY KEY, request_id INTEGER NOT NULL REFERENCES hive_requests(id), tick INTEGER NOT NULL, criterion TEXT NOT NULL, score REAL, confidence REAL, result TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_guidance(id INTEGER PRIMARY KEY, request_id INTEGER NOT NULL REFERENCES hive_requests(id), tick INTEGER NOT NULL, body TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS mq_experiments(id INTEGER PRIMARY KEY, problem_type TEXT NOT NULL, candidate TEXT NOT NULL, status TEXT NOT NULL, result TEXT, created TEXT NOT NULL)",
+      "CREATE INDEX IF NOT EXISTS hive_runs_status ON hive_runs(status,started)",
+      "CREATE INDEX IF NOT EXISTS hive_members_drone ON hive_members(drone_id,team_id)",
+      "CREATE INDEX IF NOT EXISTS hive_requests_status ON hive_requests(status,id)",
+      "CREATE INDEX IF NOT EXISTS hive_requests_team ON hive_requests(team_id,created)",
+      "CREATE INDEX IF NOT EXISTS hive_requests_run ON hive_requests(run_id,id)",
+      "CREATE INDEX IF NOT EXISTS hive_requests_parent ON hive_requests(parent_id,id)",
+      "CREATE INDEX IF NOT EXISTS hive_commitments_team ON hive_commitments(team_id,request_id,drone_id)",
+      "CREATE INDEX IF NOT EXISTS hive_commitments_drone ON hive_commitments(drone_id,request_id)",
+      "CREATE INDEX IF NOT EXISTS hive_contributions_request ON hive_contributions(request_id,id DESC)",
+      "CREATE INDEX IF NOT EXISTS hive_contributions_drone ON hive_contributions(drone_id,id DESC)",
+      "CREATE INDEX IF NOT EXISTS hive_contributions_team ON hive_contributions(team_id,id DESC)",
+      "CREATE INDEX IF NOT EXISTS hive_contributions_kind ON hive_contributions(kind,request_id,tick)",
+      "CREATE INDEX IF NOT EXISTS hive_links_to ON hive_links(to_drone,id DESC)",
+      "CREATE INDEX IF NOT EXISTS hive_links_from ON hive_links(from_drone,id DESC)",
+      "CREATE INDEX IF NOT EXISTS hive_links_contribution ON hive_links(contribution_id,to_drone)",
+      "CREATE INDEX IF NOT EXISTS hive_scores_request ON hive_scores(request_id,tick,criterion)",
+      "CREATE INDEX IF NOT EXISTS hive_scores_criterion ON hive_scores(criterion,score DESC,request_id)",
+      "CREATE INDEX IF NOT EXISTS hive_guidance_request ON hive_guidance(request_id,id DESC)",
+      "CREATE INDEX IF NOT EXISTS mq_experiments_problem ON mq_experiments(problem_type,status,id)",
+      "CREATE INDEX IF NOT EXISTS mq_experiments_candidate ON mq_experiments(candidate,id)",
+      "CREATE INDEX IF NOT EXISTS hive_runs_request ON hive_runs(request_id,id)"
+    ],
+    "logs": [
+      "PRAGMA busy_timeout=5000",
+      "CREATE TABLE IF NOT EXISTS hive_log(id INTEGER PRIMARY KEY, ts TEXT NOT NULL, scope TEXT, event TEXT, run_id INTEGER, request_id INTEGER, team_id INTEGER, drone_id INTEGER, model TEXT, outcome TEXT, duration_ms REAL, sql_op TEXT, table_name TEXT, rows_count INTEGER, decision_type TEXT, details TEXT NOT NULL)",
+      "CREATE INDEX IF NOT EXISTS hive_log_time ON hive_log(ts,id)",
+      "CREATE INDEX IF NOT EXISTS hive_log_request ON hive_log(request_id,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_run ON hive_log(run_id,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_outcome ON hive_log(outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_event ON hive_log(event,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_model ON hive_log(model,outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_sql ON hive_log(table_name,sql_op,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_decision ON hive_log(decision_type,model,outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_drone ON hive_log(drone_id,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_team ON hive_log(team_id,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_duration ON hive_log(duration_ms DESC,ts)",
+      "CREATE TABLE IF NOT EXISTS mq_log(id INTEGER PRIMARY KEY, ts TEXT NOT NULL, scope TEXT, event TEXT, run_id INTEGER, request_id INTEGER, team_id INTEGER, drone_id INTEGER, model TEXT, outcome TEXT, duration_ms REAL, sql_op TEXT, table_name TEXT, rows_count INTEGER, decision_type TEXT, details TEXT NOT NULL)",
+      "CREATE INDEX IF NOT EXISTS mq_log_time ON mq_log(ts,id)",
+      "CREATE INDEX IF NOT EXISTS mq_log_request ON mq_log(request_id,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_run ON mq_log(run_id,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_outcome ON mq_log(outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_event ON mq_log(event,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_model ON mq_log(model,outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_sql ON mq_log(table_name,sql_op,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_decision ON mq_log(decision_type,model,outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_drone ON mq_log(drone_id,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_team ON mq_log(team_id,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_duration ON mq_log(duration_ms DESC,ts)"
+    ]
+  },
+  "meta_queen": {
+    "objective": "Use the previous assessment to design an atomic variation that tests reciprocal intellectual influence: a peer changes another drone's approach, then a subsequent response changes the original contributor's approach. Preserve task quality and honest uncertainty; observing no improvement is a valid experimental result.",
+    "problem_type": "sensor-model smoke inquiry",
+    "chromosome": 0,
+    "behavior": "contribute",
+    "criteria": [
+      {
+        "name": "reciprocal_influence",
+        "description": "From attributed Contribute/Expand records, identify A changing B and a later B development changing A. Shared context counts; directed offers or candidate synthesis alone do not. Give the actual IDs and semantic change. More turns or acknowledgements alone earn no credit.",
+        "levels": [
+          {
+            "label": "absent"
+          },
+          {
+            "label": "one_way_uptake"
+          },
+          {
+            "label": "reciprocal_development"
+          }
+        ],
+        "weight": 1
+      },
+      {
+        "name": "development",
+        "description": "Did the inquiry test or derive a consequential change that taught it something useful beyond copying, agreement, or collecting alternatives?",
+        "levels": [
+          {
+            "label": "absent"
+          },
+          {
+            "label": "partial"
+          },
+          {
+            "label": "evidenced"
+          }
+        ],
+        "weight": 1
+      },
+      {
+        "name": "contract_fidelity",
+        "description": "Does the returned answer satisfy the original consistency and testability criteria, with correct predictions and explicit assumptions/uncertainty?",
+        "levels": [
+          {
+            "label": "unsupported"
+          },
+          {
+            "label": "partial"
+          },
+          {
+            "label": "supported"
+          }
+        ],
+        "weight": 1
+      }
+    ],
+    "context": "Each round runs committed drones sequentially through Contribute then Expand. Later C/E calls see earlier operational contributions. The team candidate is synthesis, even though its saved row carries a drone ID; it is not a new C/E turn. The base queen collapse call sees the contract, candidate and task-criteria result, not the attributed C/E trajectory. RETURN ends the inquiry; CONTINUE allows guidance, optional recruitment and another round. Directed offers alone do not establish uptake, and a non-member recipient has not participated. Choose one instruction to vary without forcing a number of turns or changing the task contract.",
+    "targets": [
+      "contribute",
+      "expand",
+      "candidate",
+      "collapse"
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+# Local discussions and session notes (AGENTS.md)
+.Discussion/
+.SessionNotes/
+
+# Temporary folders at any depth (AGENTS.md)
+.temp*/
+
+# Local experiment data and analysis exports (Founder approved)
+/.Analysis/
+/.Experiments/
+
+# Local databases and their journal files
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Compiled binaries and build artifacts
+*.exe
+*.dll
+*.pdb
+*.so
+*.dylib
+*.a
+*.o
+*.obj
+*.lib
+*.test
+*.pyc
+__pycache__/
+
+# Local temporary files and logs
+.temp*
+*.tmp
+*.temp
+*.bak
+*.log
+*.log.*
+
+# Saved provider experiments and generated receipts/backups
+/openrouter/
+*.receipt.json
+*-backup-request.json
+*-Backup-*.json
+config - Copy.json

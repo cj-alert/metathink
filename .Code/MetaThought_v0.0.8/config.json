@@ -1,0 +1,273 @@
+{
+  "version": "0.0.8",
+  "meta": {
+    "base_url": "https://api.meta.ai/v1",
+    "api_key_env": "MODEL_API_KEY",
+    "api_key_file": "C:/Users/clyde/OneDrive/!Projects/!iQ/!Code_iQ/!GIT_FounderOperatingSystem/!SPEC/!Codex_Connections/meta.api.txt",
+    "reasoning_effort": "low",
+    "model_reasoning_effort": {
+      "muse-wonder-1.0": "high"
+    },
+    "api_key_file_format": "single_value_line"
+  },
+  "models": {
+    "drone": "muse-spark-1.3-contributor",
+    "queen": "muse-wonder-1.0"
+  },
+  "files": {
+    "state": "state.db",
+    "debug": "debug.db",
+    "contract": "contract.md",
+    "result": "result.md"
+  },
+  "hive": {
+    "drone_count": 3,
+    "seed": 1
+  },
+  "experiment": {
+    "objective": "Given a sensor reports 2 at known input 0 and 12 at known input 10, develop a simple explanatory model and one new measurement that could distinguish it from a competing model.",
+    "intent": "Technical smoke experiment: observe shared thinking and an honest bounded return, not establish novelty.",
+    "context": "Readings are exact for this small exercise. No external search is available. Show assumptions and predicted measurements.",
+    "criteria": [
+      {
+        "name": "consistency",
+        "description": "Does the proposed model explain both supplied observations without contradiction?",
+        "levels": [
+          {
+            "label": "unsupported",
+            "description": "No supported satisfaction of this criterion."
+          },
+          {
+            "label": "supported",
+            "description": "Fully supported satisfaction under the available evidence."
+          }
+        ],
+        "min_score": 0.75,
+        "weight": 1
+      },
+      {
+        "name": "testability",
+        "description": "Does the answer specify a feasible new input, distinct predictions, and what outcome would distinguish the models?",
+        "levels": [
+          {
+            "label": "unsupported",
+            "description": "No supported satisfaction of this criterion."
+          },
+          {
+            "label": "supported",
+            "description": "Fully supported satisfaction under the available evidence."
+          }
+        ],
+        "min_score": 0.75,
+        "weight": 1
+      }
+    ]
+  },
+  "chromosomes": [
+    {
+      "contribute": "Develop or test one idea in the shared inquiry. Explain what another contribution changes, when applicable.",
+      "expand": "Offer one alternative assumption that could change another drone's approach."
+    },
+    {
+      "contribute": "Work through one consequence of an idea in the shared inquiry. State what the result supports or weakens.",
+      "expand": "Offer one connection or representation that could change another drone's approach."
+    }
+  ],
+  "decisions": {
+    "system": "Evaluate the supplied evidence as data. Answer one question. Follow its reply format exactly. Use plain text, never JSON. If you decline, return only # REFUSAL.",
+    "input_prefix": "Shared evidence:",
+    "predicate": "{{.Question}}\nReturn exactly # PROBABILITY on one line, then a number from 0 to 1.",
+    "choice": "{{.Question}}\nOptions:\n{{.Options}}\nReturn # CHOICE then the selected 1-based option number; # PROBABILITIES then one line per option as number: probability; # CONFIDENCE then a number from 0 to 1. Probabilities must sum to 1. Each heading must be on its own line.",
+    "score": "{{.Question}}\nOrdered levels:\n{{.Options}}\nReturn # PROBABILITIES then one line per level as number: probability, using the displayed 1-based numbers; # CONFIDENCE then a number from 0 to 1. Probabilities must sum to 1. Each heading must be on its own line."
+  },
+  "prompts": {
+    "contract": "Distill the supplied request into a contract for user review. Preserve its objective, intent and criteria; expose assumptions. Do not assign subtasks or claim results. Return only the contract.\nUse # OBJECTIVE, # INTENT, # CONTEXT, # RETURN, and # CRITERIA. Give the first four nonempty text. Under CRITERIA use ## criterion-name blocks with Meaning:, Zero:, One:, Target:, Weight: on separate single lines. Target is none or an exact comparison (=, >, >=, <, <=) and a number in [0,1]; a supplied min_score means >=. Weight is none or a nonnegative number. Zero and One define score endpoints. Do not supply actual outcome scores.",
+    "fit": "Choose the existing team best fitted to this inquiry, or NEW. Judge fit only; ignore capacity.",
+    "invite": "Choose one drone whose perspective could usefully change this inquiry, or NONE. Do not assign a role.",
+    "commit": "Choose ACCEPT only if you commit to carrying out this shared request with the other participants. Otherwise choose DECLINE.",
+    "contribute": "{{.Chromosome}}\nUse the shared contract and available contributions. Return one concise contribution in plain text. Preserve uncertainty. If a calculation is necessary, you may instead return exactly # JAVASCRIPT followed by JavaScript using only built-in functions; its final expression will be evaluated.",
+    "expand": "{{.Chromosome}}\nOffer one useful change in thinking, whether requested or not. Use plain text. If there is no useful offer, say NONE.",
+    "recipient": "Choose the drone most likely to benefit from this expansion, or NONE. Information exchange does not imply team membership.",
+    "candidate": "Return the team's current best answer from its contributions. Preserve alternatives, evidence, uncertainties, and unmet criteria. Do not claim novelty without evidence.",
+    "collapse": "Judge whether the accumulated drone assessments and operational evidence support a useful return under the confirmed contract. Preserve disagreement and uncertainty; repeated or high scores alone are not critical mass. Return supported findings or honest unmet findings when warranted.",
+    "guide": "Use the confirmed contract, drone assessments and inquiry evidence to give one useful question or correction. Preserve disagreements and unconventional exploration. Do not replace drone scores or assign subtasks or roles.",
+    "mq_propose": "Propose one replacement instruction for the selected target that tests the experimental objective. Use the operational evidence, runtime context and prior assessment. Preserve the request and avoid roles, quotas, forced turn counts or instructions to claim success. Return only one meaningful instruction in plain text.",
+    "mq_compare": "Compare the methods using the confirmed meta contract, attributed drone assessments and operational evidence. Explain changes, disagreements, uncertainty and one useful next hypothesis. Do not assign or replace numeric scores or infer superiority from one run. Return concise plain text.",
+    "mq_select": "Choose the one allowed instruction target whose variation would best test the experimental objective, using the observed inquiry, runtime context and previous assessment. Judge the opportunity to learn, not the prospect of a favorable score.",
+    "mq_action": "Choose MUTATE to test one replacement instruction, CROSSOVER to transfer one compatible instruction, RETEST to examine uncertainty, or RETURN to report a supported methodological conclusion or explain why no informative next experiment is warranted. Use attributed exchanges and assessments; a solved task alone does not complete this inquiry. Seek useful learning, not favorable ratings. No minimum generation, trial or turn count is required.",
+    "mq_parent": "Choose one available method whose further variation or retest would best address the experimental objective and unresolved evidence. Preserve useful alternatives; one favorable run does not establish a winner.",
+    "mq_donor": "Choose one available donor whose compatible whole instruction offers a useful test with the selected parent. Consider the recorded evidence and differences; do not infer superiority from agreement or ratings alone.",
+    "mq_target": "Choose one allowed instruction target in the selected method for the stated mutation or compatible crossover. Use the operational evidence and prior assessments to identify a meaningful uncertainty to test. Preserve the task contract and fixed evaluator.",
+    "mq_mutate": "Replace the selected instruction with one meaningful instruction that tests the unresolved experimental hypothesis. Preserve the task contract, output protocol and fixed evaluator. Do not prescribe roles, quotas, forced turns or claims of success. Return only the replacement instruction in plain text.",
+    "mq_return": "Explain why the confirmed meta inquiry can return using its attributed drone assessments and operational evidence. Identify supported methods and trial IDs, unmet criteria and uncertainty. A solved task alone does not complete a method inquiry. Do not assign replacement scores or claim unsupported general superiority or novelty. Return concise plain text.",
+    "assess": "Assess the named subject using only the top-level scoring_elements array as the rubric. Use each element's meaning, zero and one anchors; criteria and scores inside operational evidence are context only. Check claims against author IDs, record order and operation kind within the assessed trial; do not accept self-description or earlier scores as proof. For reciprocal influence, require a later individual Contribute/Expand record showing consequential feedback to an earlier contributor; team synthesis alone does not count, even if its row has a drone ID. Cite supporting records and identify contradictions or missing steps. Give your own actual 0..1 scores, evidence and uncertainty; preserve objections. Desired targets are not actual scores, and scores need not sum to one. Return one # <name> section for every scoring_elements entry, copying its name exactly, with exactly Score:, Evidence:, Uncertainty: fields. Score is one finite number in [0,1]. Evidence and Uncertainty must be nonempty; indent continuation lines that contain a label. No preface, fences or other headings.",
+    "collapse_format": "Return exactly four sections: # DECISION with RETURN or CONTINUE; # CANDIDATES with saved candidate IDs separated by commas for RETURN, or NONE for CONTINUE; # CRITERIA with MET, UNMET or UNCERTAIN; # REASON with a concise evidence-based explanation. Select the actual answer or answers to return, including earlier candidates when appropriate. MET requires supported satisfaction of every required target for the selected return. Do not invent IDs or replacement scores, or hide unmet criteria in an average.",
+    "queen_role": "You are the Queen of MetaThought. You have three responsibilities:\n1. Structure the user's request, confirm it with the user, and pass it to the hive.\n2. Keep drones and teams aligned with the confirmed objective and criteria.\n3. Decide when to begin convergence and return conclusions supported by the teams' evidence, scores and uncertainty.\n\nDrones form teams and perform exploration, testing and scoring.",
+    "queen_intake": "For this call, only structure the request for user confirmation. Preserve the user's intent, exact criteria and thresholds. Define what 0 and 1 mean for each criterion and how it will be evaluated. State assumptions or questions that need clarification. Do not propose solutions or start drone work.",
+    "queen_dispatch": "For this call, write the plain-text queen_request or queen_requests that pass the accepted objective to the hive. Preserve the full objective, exact criteria and thresholds, and evaluation context. Keep unanswered clarification questions explicit; do not invent answers.\n\nEvery queen_request must be handled by a team. The receiving drone finds an existing team by fit, ignoring capacity. If no suitable team is found, it initiates formation; two drones explicitly committing to the shared request establish a team. The founding drone gains no special authority. Teams persist and may overlap.\n\nLeave approaches, divisions of thinking and team structure to the drones. Require findings and candidate hypotheses to carry evidence, tests that could falsify them, and an actual 0-to-1 score for every criterion with supporting evidence and uncertainty. Teams must report completion back to the Queen, including unmet criteria and unresolved questions. The Queen guides alignment and decides when to begin collapse.\n\nDo not propose research solutions, prescribe fixed subtasks or roles, introduce quotas, or claim that drones have started. Return only the handoff request or requests."
+  },
+  "schema": {
+    "state": [
+      "PRAGMA foreign_keys=ON",
+      "PRAGMA busy_timeout=5000",
+      "CREATE TABLE IF NOT EXISTS hive_runs(id INTEGER PRIMARY KEY, started TEXT NOT NULL, finished TEXT, status TEXT NOT NULL, version TEXT NOT NULL, calls INTEGER NOT NULL DEFAULT 0, config TEXT NOT NULL, request_id INTEGER)",
+      "CREATE TABLE IF NOT EXISTS hive_drones(id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, contribute TEXT NOT NULL, expand TEXT NOT NULL, signal TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_teams(id INTEGER PRIMARY KEY, summary TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_members(team_id INTEGER NOT NULL REFERENCES hive_teams(id), drone_id INTEGER NOT NULL REFERENCES hive_drones(id), PRIMARY KEY(team_id,drone_id))",
+      "CREATE TABLE IF NOT EXISTS hive_requests(id INTEGER PRIMARY KEY, run_id INTEGER NOT NULL REFERENCES hive_runs(id), parent_id INTEGER REFERENCES hive_requests(id), contract TEXT NOT NULL, status TEXT NOT NULL, team_id INTEGER REFERENCES hive_teams(id), result TEXT, finish_reason TEXT, criteria_met INTEGER, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_commitments(request_id INTEGER NOT NULL REFERENCES hive_requests(id), team_id INTEGER NOT NULL REFERENCES hive_teams(id), drone_id INTEGER NOT NULL REFERENCES hive_drones(id), created TEXT NOT NULL, PRIMARY KEY(request_id,drone_id))",
+      "CREATE TABLE IF NOT EXISTS hive_contributions(id INTEGER PRIMARY KEY, request_id INTEGER NOT NULL REFERENCES hive_requests(id), team_id INTEGER NOT NULL REFERENCES hive_teams(id), drone_id INTEGER NOT NULL REFERENCES hive_drones(id), tick INTEGER NOT NULL, kind TEXT NOT NULL, body TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_links(id INTEGER PRIMARY KEY, request_id INTEGER NOT NULL REFERENCES hive_requests(id), contribution_id INTEGER NOT NULL REFERENCES hive_contributions(id), from_drone INTEGER NOT NULL REFERENCES hive_drones(id), to_drone INTEGER NOT NULL REFERENCES hive_drones(id), created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_scores(id INTEGER PRIMARY KEY, request_id INTEGER NOT NULL REFERENCES hive_requests(id), tick INTEGER NOT NULL, criterion TEXT NOT NULL, score REAL, confidence REAL, result TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_guidance(id INTEGER PRIMARY KEY, request_id INTEGER NOT NULL REFERENCES hive_requests(id), tick INTEGER NOT NULL, body TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS mq_experiments(id INTEGER PRIMARY KEY, problem_type TEXT NOT NULL, candidate TEXT NOT NULL, status TEXT NOT NULL, result TEXT, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS mq_evolutions(id INTEGER PRIMARY KEY, problem_type TEXT NOT NULL, status TEXT NOT NULL, state TEXT NOT NULL, created TEXT NOT NULL, updated TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS mq_methods(id INTEGER PRIMARY KEY, evolution_id INTEGER NOT NULL, parent_id INTEGER, donor_id INTEGER, operator TEXT NOT NULL, target TEXT NOT NULL, chromosome INTEGER NOT NULL, config TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS mq_trials(id INTEGER PRIMARY KEY, evolution_id INTEGER NOT NULL, method_id INTEGER NOT NULL, status TEXT NOT NULL, evidence TEXT NOT NULL DEFAULT '{}', assessment TEXT NOT NULL DEFAULT '', created TEXT NOT NULL, updated TEXT NOT NULL)",
+      "CREATE INDEX IF NOT EXISTS hive_runs_status ON hive_runs(status,started)",
+      "CREATE INDEX IF NOT EXISTS hive_members_drone ON hive_members(drone_id,team_id)",
+      "CREATE INDEX IF NOT EXISTS hive_requests_status ON hive_requests(status,id)",
+      "CREATE INDEX IF NOT EXISTS hive_requests_team ON hive_requests(team_id,created)",
+      "CREATE INDEX IF NOT EXISTS hive_requests_run ON hive_requests(run_id,id)",
+      "CREATE INDEX IF NOT EXISTS hive_requests_parent ON hive_requests(parent_id,id)",
+      "CREATE INDEX IF NOT EXISTS hive_commitments_team ON hive_commitments(team_id,request_id,drone_id)",
+      "CREATE INDEX IF NOT EXISTS hive_commitments_drone ON hive_commitments(drone_id,request_id)",
+      "CREATE INDEX IF NOT EXISTS hive_contributions_request ON hive_contributions(request_id,id DESC)",
+      "CREATE INDEX IF NOT EXISTS hive_contributions_drone ON hive_contributions(drone_id,id DESC)",
+      "CREATE INDEX IF NOT EXISTS hive_contributions_team ON hive_contributions(team_id,id DESC)",
+      "CREATE INDEX IF NOT EXISTS hive_contributions_kind ON hive_contributions(kind,request_id,tick)",
+      "CREATE INDEX IF NOT EXISTS hive_links_to ON hive_links(to_drone,id DESC)",
+      "CREATE INDEX IF NOT EXISTS hive_links_from ON hive_links(from_drone,id DESC)",
+      "CREATE INDEX IF NOT EXISTS hive_links_contribution ON hive_links(contribution_id,to_drone)",
+      "CREATE INDEX IF NOT EXISTS hive_scores_request ON hive_scores(request_id,tick,criterion)",
+      "CREATE INDEX IF NOT EXISTS hive_scores_criterion ON hive_scores(criterion,score DESC,request_id)",
+      "CREATE INDEX IF NOT EXISTS hive_guidance_request ON hive_guidance(request_id,id DESC)",
+      "CREATE INDEX IF NOT EXISTS mq_experiments_problem ON mq_experiments(problem_type,status,id)",
+      "CREATE INDEX IF NOT EXISTS mq_experiments_candidate ON mq_experiments(candidate,id)",
+      "CREATE INDEX IF NOT EXISTS hive_runs_request ON hive_runs(request_id,id)",
+      "CREATE INDEX IF NOT EXISTS mq_evolutions_status ON mq_evolutions(status,updated,id)",
+      "CREATE INDEX IF NOT EXISTS mq_evolutions_problem ON mq_evolutions(problem_type,status,id)",
+      "CREATE INDEX IF NOT EXISTS mq_evolutions_created ON mq_evolutions(created,id)",
+      "CREATE INDEX IF NOT EXISTS mq_methods_evolution ON mq_methods(evolution_id,id)",
+      "CREATE INDEX IF NOT EXISTS mq_methods_parent ON mq_methods(parent_id,created,id)",
+      "CREATE INDEX IF NOT EXISTS mq_methods_donor ON mq_methods(donor_id,created,id)",
+      "CREATE INDEX IF NOT EXISTS mq_methods_operator ON mq_methods(evolution_id,operator,target,chromosome,id)",
+      "CREATE INDEX IF NOT EXISTS mq_methods_created ON mq_methods(created,id)",
+      "CREATE INDEX IF NOT EXISTS mq_trials_evolution_status ON mq_trials(evolution_id,status,updated,id)",
+      "CREATE INDEX IF NOT EXISTS mq_trials_method_status ON mq_trials(method_id,status,id)",
+      "CREATE INDEX IF NOT EXISTS mq_trials_updated ON mq_trials(updated,id)",
+      "CREATE TABLE IF NOT EXISTS hive_assessments(id INTEGER PRIMARY KEY, request_id INTEGER NOT NULL REFERENCES hive_requests(id), team_id INTEGER NOT NULL REFERENCES hive_teams(id), drone_id INTEGER NOT NULL REFERENCES hive_drones(id), candidate_id INTEGER NOT NULL REFERENCES hive_contributions(id), tick INTEGER NOT NULL, criterion TEXT NOT NULL, score REAL NOT NULL, evidence TEXT NOT NULL, uncertainty TEXT NOT NULL, created TEXT NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS hive_reviews(id INTEGER PRIMARY KEY, request_id INTEGER NOT NULL REFERENCES hive_requests(id), candidate_id INTEGER NOT NULL REFERENCES hive_contributions(id), tick INTEGER NOT NULL, decision TEXT NOT NULL, criteria_status TEXT NOT NULL, reason TEXT NOT NULL, selected_candidate_ids TEXT NOT NULL DEFAULT '[]', created TEXT NOT NULL)",
+      "CREATE INDEX IF NOT EXISTS hive_assessments_request ON hive_assessments(request_id,id)",
+      "CREATE INDEX IF NOT EXISTS hive_assessments_candidate ON hive_assessments(candidate_id,drone_id,criterion)",
+      "CREATE INDEX IF NOT EXISTS hive_assessments_drone ON hive_assessments(drone_id,request_id,id)",
+      "CREATE INDEX IF NOT EXISTS hive_assessments_criterion ON hive_assessments(criterion,score,request_id)",
+      "CREATE INDEX IF NOT EXISTS hive_reviews_request ON hive_reviews(request_id,id)",
+      "CREATE INDEX IF NOT EXISTS hive_reviews_candidate ON hive_reviews(candidate_id,id)",
+      "CREATE TABLE IF NOT EXISTS mq_inquiries(id INTEGER PRIMARY KEY,kind TEXT NOT NULL,owner_id INTEGER NOT NULL,contract TEXT NOT NULL,status TEXT NOT NULL,created TEXT NOT NULL,UNIQUE(kind,owner_id))",
+      "CREATE TABLE IF NOT EXISTS mq_commitments(inquiry_id INTEGER NOT NULL REFERENCES mq_inquiries(id),drone_id INTEGER NOT NULL,pair TEXT NOT NULL,status TEXT NOT NULL,created TEXT NOT NULL,PRIMARY KEY(inquiry_id,drone_id))",
+      "CREATE TABLE IF NOT EXISTS mq_assessments(id INTEGER PRIMARY KEY,inquiry_id INTEGER NOT NULL REFERENCES mq_inquiries(id),subject_key TEXT NOT NULL,drone_id INTEGER NOT NULL,criterion TEXT NOT NULL,score REAL NOT NULL,evidence TEXT NOT NULL,uncertainty TEXT NOT NULL,created TEXT NOT NULL)",
+      "CREATE INDEX IF NOT EXISTS mq_inquiries_status ON mq_inquiries(status,kind,created,id)",
+      "CREATE INDEX IF NOT EXISTS mq_commitments_status ON mq_commitments(inquiry_id,status,drone_id)",
+      "CREATE INDEX IF NOT EXISTS mq_commitments_drone ON mq_commitments(drone_id,inquiry_id)",
+      "CREATE INDEX IF NOT EXISTS mq_assessments_subject ON mq_assessments(inquiry_id,subject_key,drone_id,criterion)",
+      "CREATE INDEX IF NOT EXISTS mq_assessments_criterion ON mq_assessments(criterion,score,inquiry_id)",
+      "CREATE INDEX IF NOT EXISTS mq_assessments_drone ON mq_assessments(inquiry_id,drone_id,id)",
+      "CREATE INDEX IF NOT EXISTS mq_assessments_created ON mq_assessments(created,inquiry_id,id)"
+    ],
+    "logs": [
+      "PRAGMA busy_timeout=5000",
+      "CREATE TABLE IF NOT EXISTS hive_log(id INTEGER PRIMARY KEY, ts TEXT NOT NULL, scope TEXT, event TEXT, run_id INTEGER, request_id INTEGER, team_id INTEGER, drone_id INTEGER, model TEXT, outcome TEXT, duration_ms REAL, sql_op TEXT, table_name TEXT, rows_count INTEGER, decision_type TEXT, details TEXT NOT NULL)",
+      "CREATE INDEX IF NOT EXISTS hive_log_time ON hive_log(ts,id)",
+      "CREATE INDEX IF NOT EXISTS hive_log_request ON hive_log(request_id,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_run ON hive_log(run_id,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_outcome ON hive_log(outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_event ON hive_log(event,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_model ON hive_log(model,outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_sql ON hive_log(table_name,sql_op,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_decision ON hive_log(decision_type,model,outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_drone ON hive_log(drone_id,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_team ON hive_log(team_id,ts)",
+      "CREATE INDEX IF NOT EXISTS hive_log_duration ON hive_log(duration_ms DESC,ts)",
+      "CREATE TABLE IF NOT EXISTS mq_log(id INTEGER PRIMARY KEY, ts TEXT NOT NULL, scope TEXT, event TEXT, run_id INTEGER, request_id INTEGER, team_id INTEGER, drone_id INTEGER, model TEXT, outcome TEXT, duration_ms REAL, sql_op TEXT, table_name TEXT, rows_count INTEGER, decision_type TEXT, details TEXT NOT NULL)",
+      "CREATE INDEX IF NOT EXISTS mq_log_time ON mq_log(ts,id)",
+      "CREATE INDEX IF NOT EXISTS mq_log_request ON mq_log(request_id,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_run ON mq_log(run_id,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_outcome ON mq_log(outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_event ON mq_log(event,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_model ON mq_log(model,outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_sql ON mq_log(table_name,sql_op,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_decision ON mq_log(decision_type,model,outcome,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_drone ON mq_log(drone_id,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_team ON mq_log(team_id,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_duration ON mq_log(duration_ms DESC,ts)",
+      "CREATE INDEX IF NOT EXISTS mq_log_evolution ON mq_log(json_extract(details,'$.evolution_id'),ts,id)",
+      "CREATE INDEX IF NOT EXISTS mq_log_method ON mq_log(json_extract(details,'$.method_id'),ts,id)",
+      "CREATE INDEX IF NOT EXISTS mq_log_trial ON mq_log(json_extract(details,'$.trial_id'),ts,id)",
+      "CREATE INDEX IF NOT EXISTS mq_log_inquiry ON mq_log(json_extract(details,'$.inquiry_id'),ts,id)",
+      "CREATE INDEX IF NOT EXISTS mq_log_subject ON mq_log(json_extract(details,'$.inquiry_id'),json_extract(details,'$.subject_key'),ts,id)"
+    ]
+  },
+  "meta_queen": {
+    "objective": "Investigate and improve reusable methods for reciprocal intellectual influence while preserving task quality and honest uncertainty. The task contract is an experimental case; solving it alone does not complete this method inquiry. Preserve useful alternatives and return a supported methodological conclusion or explain why no informative next experiment is warranted.",
+    "problem_type": "user-confirmed inquiry",
+    "chromosome": 0,
+    "behavior": "contribute",
+    "criteria": [
+      {
+        "name": "reciprocal_influence",
+        "description": "From attributed Contribute/Expand records, identify A changing B and a later B development changing A. Shared context counts; directed offers or candidate synthesis alone do not. Give the actual IDs and semantic change. More turns or acknowledgements alone earn no credit.",
+        "levels": [
+          {
+            "label": "zero",
+            "description": "No evidence that one drone changed another’s approach."
+          },
+          {
+            "label": "one",
+            "description": "Attributed evidence shows a consequential A-to-B-to-A change in approach, with the actual changes identified."
+          }
+        ],
+        "weight": 1
+      },
+      {
+        "name": "development",
+        "description": "Did the inquiry test or derive a consequential change that taught it something useful beyond copying, agreement, or collecting alternatives?",
+        "levels": [
+          {
+            "label": "zero",
+            "description": "No consequential development beyond repeating or collecting claims."
+          },
+          {
+            "label": "one",
+            "description": "Evidence shows a consequential derivation or test that taught the inquiry something useful."
+          }
+        ],
+        "weight": 1
+      },
+      {
+        "name": "contract_fidelity",
+        "description": "How well does the returned answer fulfill the actual confirmed task objective and criteria, supported by its evidence? Assess the supplied task contract, not assumed criteria from a previous test problem.",
+        "levels": [
+          {
+            "label": "zero",
+            "description": "The result contradicts or lacks support for the confirmed task requirements."
+          },
+          {
+            "label": "one",
+            "description": "The result has supported satisfaction of the confirmed task requirements, with assumptions and uncertainty explicit."
+          }
+        ],
+        "weight": 1
+      }
+    ],
+    "context": "Committed base drones run Contribute then Expand sequentially; later calls see prior operational contributions. Candidate rows are synthesis, not additional C/E turns. Base Queen review receives the confirmed task contract, attributed trajectory, separate drone assessments, offers and guidance. RETURN explicitly selects saved candidate IDs; CONTINUE permits guidance, recruitment and further inquiry. Method-assessment drones commit to the separate confirmed meta inquiry and supply its criterion scores. Meta-Queen chooses experiments or returns from those scores and operational evidence. Offers alone do not establish uptake. Only drone Contribute and Expand chromosome instructions are mutation targets. Queen role, intake, handoff, guidance, collapse, scoring contracts and reply protocols are fixed.",
+    "targets": [
+      "contribute",
+      "expand"
+    ],
+    "intent": "Learn which thinking-method changes produce useful intellectual influence under the confirmed task contract; preserve uncertainty and alternatives."
+  },
+  "intake": {
+    "instructions": "I want the queen to take my question and figure out the objectives, what to score, the target scores, and how to evaluate. Then confirm that with me before the drones start."
+  }
+}
